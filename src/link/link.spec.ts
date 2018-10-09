@@ -4,6 +4,8 @@ import { By } from "@angular/platform-browser";
 
 import { Link } from "./link.directive";
 
+let disabledKnob;
+
 describe("Link", () => {
 	it("should create a Link", () => {
 		TestBed.configureTestingModule({
@@ -22,6 +24,7 @@ describe("Link", () => {
 	});
 
 	it("should create a disabled link", () => {
+		disabledKnob = true;
 		TestBed.configureTestingModule({
 			declarations: [TestDisabledLinkComponent, Link]
 		});
@@ -31,8 +34,21 @@ describe("Link", () => {
 		fixture.detectChanges();
 
 		const directiveEl = fixture.debugElement.query(By.directive(Link));
-		expect(directiveEl.attributes["disabled"]).toBe("true");
 		expect(directiveEl.attributes["aria-disabled"]).toBe("true");
+	});
+
+	it("should be able to switch the disabled link to an enabled one", () => {
+		disabledKnob = false;
+		TestBed.configureTestingModule({
+			declarations: [TestDisabledLinkComponent, Link]
+		});
+
+		let fixture: ComponentFixture<TestDisabledLinkComponent> = TestBed.createComponent(TestDisabledLinkComponent);
+		let component: TestDisabledLinkComponent = fixture.componentInstance;
+		fixture.detectChanges();
+
+		const directiveEl = fixture.debugElement.query(By.directive(Link));
+		expect(directiveEl.attributes["aria-disabled"]).toBe("false");
 	});
 });
 
@@ -43,7 +59,8 @@ class TestLinkComponent {
 }
 
 @Component({
-	template: `<a href="https://angular.carbondesignsystem.com/" disabled="true" ibmLink>link</a>`
+	template: `<a href="https://angular.carbondesignsystem.com/" [disabled]="isDisabled" ibmLink>link</a>`
 })
 class TestDisabledLinkComponent {
+	isDisabled: boolean = disabledKnob;
 }
